@@ -12,10 +12,10 @@ repository = "https://github.com/voelklmichael/type-name/"
 proc-macro = true
 
 [dependencies]
-darling = "0.13.1"
+darling = "0.14.0"
 proc-macro2 = "1.0"
 quote = "1.0"
 syn = { version = "1.0", features = ["full"] }
 
 [dev-dependencies]
-type-name = {path = "../type-name"}
+type-name = {path = "../type-name", version="0.1"}

@@ -9,5 +9,5 @@ description = "Infrastructure to derive name of type - helper crate to test crat
 repository = "https://github.com/voelklmichael/type-name/"
 
 [dependencies]
-type-name = {path = "../type-name"}
-type-name-example-base = {path = "../type-name-example-base/"}
+type-name = {path = "../type-name", version="0.1"}
+type-name-example-base = {path = "../type-name-example-base/", version="0.4.2"}
