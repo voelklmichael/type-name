@@ -1,0 +1,20 @@
+[package]
+name = "type-name-derive"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+readme = "README.md"
+authors = ["Michael Völkl <michaelvoelkl@zoho.com>"]
+description = "Infrastructure to derive name of type - proc macro crate "
+
+[lib]
+proc-macro = true
+
+[dependencies]
+darling = "0.13.1"
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "1.0", features = ["full"] }
+
+[dev-dependencies]
+type-name = {path = "../type-name"}

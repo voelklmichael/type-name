@@ -1,0 +1,12 @@
+[package]
+name = "type-name-example"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+readme = "README.md"
+authors = ["Michael Völkl <michaelvoelkl@zoho.com>"]
+description = "Infrastructure to derive name of type - helper crate to test crate_version computation"
+
+[dependencies]
+type-name = {path = "../type-name"}
+type-name-example-base = {path = "../type-name-example-base/"}

@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "type-name",
+    "type-name-derive",
+    "type-name-example",
+    "type-name-example-base",    
+]
