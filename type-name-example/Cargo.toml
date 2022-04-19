@@ -6,6 +6,7 @@ license = "MIT"
 readme = "README.md"
 authors = ["Michael Völkl <michaelvoelkl@zoho.com>"]
 description = "Infrastructure to derive name of type - helper crate to test crate_version computation"
+repository = "https://github.com/voelklmichael/type-name/"
 
 [dependencies]
 type-name = {path = "../type-name"}
