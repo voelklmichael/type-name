@@ -145,6 +145,12 @@ dependencies = [
 [[package]]
 name = "type-name"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2943970af6eaf4699869a46d6b250a3b26ce246f1cba2a059e109cbf4012d908"
+
+[[package]]
+name = "type-name"
+version = "0.1.1"
 dependencies = [
  "rustc_version",
  "semver",
@@ -155,12 +161,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "type-name"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2943970af6eaf4699869a46d6b250a3b26ce246f1cba2a059e109cbf4012d908"
-
-[[package]]
 name = "type-name-derive"
 version = "0.1.0"
 dependencies = [
@@ -168,14 +168,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "type-name 0.1.0",
+ "type-name 0.1.1",
 ]
 
 [[package]]
 name = "type-name-example"
 version = "0.1.0"
 dependencies = [
- "type-name 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "type-name 0.1.0",
  "type-name-example-base",
 ]
 
@@ -183,7 +183,7 @@ dependencies = [
 name = "type-name-example-base"
 version = "0.4.2"
 dependencies = [
- "type-name 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "type-name 0.1.0",
 ]
 
 [[package]]
