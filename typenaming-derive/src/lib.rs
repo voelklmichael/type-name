@@ -21,6 +21,8 @@ struct TypeNameArguments {
     #[darling(default)]
     crate_name: Option<syn::Ident>,
     #[darling(default)]
+    crate_module: Option<String>,
+    #[darling(default)]
     crate_version: Option<String>,
     #[darling(default)]
     rustc_version: Option<String>,
@@ -34,6 +36,7 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     let TypeNameArguments {
         type_name,
         crate_name,
+        crate_module,
         crate_version,
         rustc_version,
         default_to_none,
@@ -58,9 +61,20 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     } else {
         quote!(Some(env!("CARGO_PKG_NAME").to_owned()))
     };
+    let module_path_import;
+    let crate_module = if let Some(crate_module) = crate_module {
+        module_path_import = quote! {};
+        quote!(Some(stringify!(#crate_module).to_owned()))
+    } else if default_to_none {
+        module_path_import = quote! {};
+        quote!(None)
+    } else {
+        module_path_import = quote! {use ::std::module_path as std_module_path_module_path;};
+        quote!(Some(std_module_path_module_path!().to_owned()))
+    };
     let crate_version = if let Some(crate_version) = crate_version {
         quote!(Some(
-                <::type_name::TypeNameSemverVersion as ::std::str::FromStr>::from_str(
+                <::typenaming::TypeNameSemverVersion as ::std::str::FromStr>::from_str(
                 #crate_version
             )
             .expect(&format!("Failed to parse crate version argument '{}'", #crate_version)))
@@ -68,7 +82,7 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     } else if default_to_none {
         quote!(None)
     } else {
-        quote!(Some(::type_name::new_semver_version(
+        quote!(Some(::typenaming::new_semver_version(
             env!("CARGO_PKG_VERSION_MAJOR"),
             env!("CARGO_PKG_VERSION_MINOR"),
             env!("CARGO_PKG_VERSION_PATCH"),
@@ -77,7 +91,7 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     };
     let rustc_version = if let Some(rustc_version) = rustc_version {
         quote!(Some(
-            <::type_name::TypeNameSemverVersion as ::std::str::FromStr>::from_str(
+            <::typenaming::TypeNameSemverVersion as ::std::str::FromStr>::from_str(
                 #rustc_version
             )
             .expect(&format!("Failed to parse rustc version argument '{}'", #rustc_version))
@@ -86,18 +100,20 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
         quote!(None)
     } else {
         quote!(Some(
-            ::type_name::rustc_version().expect("Failed to fetch rustc version")
+            ::typenaming::rustc_version().expect("Failed to fetch rustc version")
         ))
     };
     let generics = generics
         .type_params()
         .map(|x| x.ident.clone())
         .collect::<Vec<_>>();
-    let generics = quote!(#(<#generics as ::type_name::TypeName>::type_name_static()),*);
+    let generics = quote!(#(<#generics as ::typenaming::TypeName>::type_name_static()),*);
     let body = quote! {
-        ::type_name::TypeNameData::new(
+        #module_path_import
+        ::typenaming::TypeNameData::new(
             #type_name.to_owned(),
             #crate_name,
+            #crate_module,
             #crate_version,
             #rustc_version,
             vec![
@@ -108,10 +124,10 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     quote! {
         #[automatically_derived]
         impl #impl_generics TypeName for #ident #ty_generics #where_clause {
-            fn type_name(&self) -> ::type_name::TypeNameData {
+            fn type_name(&self) -> ::typenaming::TypeNameData {
                 #body
             }
-            fn type_name_static() -> ::type_name::TypeNameData where Self: Sized {
+            fn type_name_static() -> ::typenaming::TypeNameData where Self: Sized {
                 #body
             }
         }

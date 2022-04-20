@@ -143,47 +143,41 @@ dependencies = [
 ]
 
 [[package]]
-name = "type-name"
+name = "typenaming"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2943970af6eaf4699869a46d6b250a3b26ce246f1cba2a059e109cbf4012d908"
-
-[[package]]
-name = "type-name"
-version = "0.1.1"
 dependencies = [
  "rustc_version",
  "semver",
  "serde",
  "serde_json",
- "type-name-derive",
+ "typenaming-derive",
  "version",
 ]
 
 [[package]]
-name = "type-name-derive"
+name = "typenaming-derive"
 version = "0.1.0"
 dependencies = [
  "darling",
  "proc-macro2",
  "quote",
  "syn",
- "type-name 0.1.1",
+ "typenaming",
 ]
 
 [[package]]
-name = "type-name-example"
+name = "typenaming-example"
 version = "0.1.0"
 dependencies = [
- "type-name 0.1.0",
- "type-name-example-base",
+ "typenaming",
+ "typenaming-example-base",
 ]
 
 [[package]]
-name = "type-name-example-base"
+name = "typenaming-example-base"
 version = "0.4.2"
 dependencies = [
- "type-name 0.1.0",
+ "typenaming",
 ]
 
 [[package]]

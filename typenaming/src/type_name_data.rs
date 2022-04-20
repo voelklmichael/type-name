@@ -3,6 +3,7 @@
 pub struct TypeNameData {
     type_name: String,
     crate_name: Option<String>,
+    crate_module: Option<String>,
     crate_version: Option<::semver::Version>,
     rustc_version: Option<::semver::Version>,
     generics: Vec<TypeNameData>,
@@ -26,6 +27,11 @@ impl TypeNameData {
     pub fn crate_name(&self) -> &Option<String> {
         &self.crate_name
     }
+    /// Get module of crate, in which the type is contained
+    /// This typically shows the information deliviered by 'std::module_path::module_path!'
+    pub fn crate_module(&self) -> &Option<String> {
+        &self.crate_module
+    }
     /// Get version of crate, in which the type is contained - if available
     pub fn crate_version(&self) -> &Option<::semver::Version> {
         &self.crate_version
@@ -42,6 +48,7 @@ impl TypeNameData {
     pub const fn new(
         type_name: String,
         crate_name: Option<String>,
+        crate_module: Option<String>,
         crate_version: Option<::semver::Version>,
         rustc_version: Option<::semver::Version>,
         generics: Vec<TypeNameData>,
@@ -49,6 +56,7 @@ impl TypeNameData {
         Self {
             type_name,
             crate_name,
+            crate_module,
             crate_version,
             rustc_version,
             generics,
@@ -58,6 +66,7 @@ impl TypeNameData {
         let Self {
             type_name,
             crate_name,
+            crate_module,
             crate_version,
             rustc_version,
             generics,
@@ -76,6 +85,10 @@ impl TypeNameData {
         if let Some(crate_name) = crate_name {
             s += ", Crate=";
             s += crate_name;
+        }
+        if let Some(crate_module) = crate_module {
+            s += ", Module=";
+            s += crate_module;
         }
         if let Some(crate_version) = crate_version {
             s += ", Version=";
@@ -102,6 +115,7 @@ impl TypeNameData {
                     return Err((ParseError::TypeNameNotFound, tokens.to_string()));
                 };
             let mut crate_name = None;
+            let mut crate_module = None;
             let mut crate_version = None;
             let mut rustc_version = None;
             let mut generics = Vec::new();
@@ -131,6 +145,22 @@ impl TypeNameData {
                             } else {
                                 return Err((
                                     ParseError::FailedToParseCrateName,
+                                    tokens.to_string(),
+                                ));
+                            }
+                        } else if let Some((s, data)) = s.split_once("Module=") {
+                            if s.trim().is_empty() {
+                                if crate_module.is_none() {
+                                    crate_module = Some(data.trim().to_owned());
+                                } else {
+                                    return Err((
+                                        ParseError::CrateModuleSetTwice,
+                                        tokens.to_string(),
+                                    ));
+                                }
+                            } else {
+                                return Err((
+                                    ParseError::FailedToParseCrateModule,
                                     tokens.to_string(),
                                 ));
                             }
@@ -227,6 +257,7 @@ impl TypeNameData {
                 TypeNameData {
                     type_name,
                     crate_name,
+                    crate_module,
                     crate_version,
                     rustc_version,
                     generics,
@@ -301,6 +332,8 @@ pub enum ParseError {
     UnexpectedGenericStart,
     FailedToParseCrateName,
     CrateNameSetTwice,
+    FailedToParseCrateModule,
+    CrateModuleSetTwice,
     FailedToParseCrateVersion,
     CrateVersionSetTwice,
     FailedToParseRustcVersion,
@@ -336,6 +369,7 @@ mod serde_tests {
         TypeNameData {
             type_name: "Test".to_owned(),
             crate_name: Some("testing".to_owned()),
+            crate_module: Some("test_module".to_owned()),
             crate_version: Some(semver::Version::new(1, 2, 3)),
             rustc_version: Some(semver::Version {
                 major: 2,
@@ -352,6 +386,7 @@ mod serde_tests {
         TypeNameData {
             type_name: "Gen".to_owned(),
             crate_name: Some("generic".to_owned()),
+            crate_module: Some("test_module".to_owned()),
             crate_version: Some(semver::Version::new(1, 2, 3)),
             rustc_version: Some(semver::Version {
                 major: 2,
@@ -368,6 +403,7 @@ mod serde_tests {
         TypeNameData {
             type_name: "Gen".to_owned(),
             crate_name: Some("generic2".to_owned()),
+            crate_module: Some("test_module".to_owned()),
             crate_version: Some(semver::Version::new(1, 2, 3)),
             rustc_version: Some(semver::Version {
                 major: 33,
@@ -396,7 +432,7 @@ mod serde_tests {
         let serialized = dbg!(serde_json::to_string_pretty(&simple_example())).unwrap();
         assert_eq!(
             serialized,
-            "\"Test, Crate=testing, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei\""
+            "\"Test, Crate=testing, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei\""
         );
     }
     #[test]
@@ -411,7 +447,7 @@ mod serde_tests {
         let serialized = dbg!(serde_json::to_string_pretty(&generic_example())).unwrap();
         assert_eq!(
         serialized,
-        "\"Gen<Test, Crate=testing, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei>, Crate=generic, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei\""
+        "\"Gen<Test, Crate=testing, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei>, Crate=generic, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei\""
     );
     }
     #[test]
@@ -426,7 +462,7 @@ mod serde_tests {
         let serialized = dbg!(serde_json::to_string_pretty(&generic2_example())).unwrap();
         assert_eq!(
         serialized,
-        "\"Gen<Test, Crate=testing, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei; Gen<Test, Crate=testing, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei>, Crate=generic, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei; Test, Crate=testing, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei>, Crate=generic2, Version=1.2.3, Rustc=33.22.11-ieie+ieieiei\"");
+        "\"Gen<Test, Crate=testing, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei; Gen<Test, Crate=testing, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei>, Crate=generic, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei; Test, Crate=testing, Module=test_module, Version=1.2.3, Rustc=2.0.1-ieie+ieieiei>, Crate=generic2, Module=test_module, Version=1.2.3, Rustc=33.22.11-ieie+ieieiei\"");
     }
     #[test]
     fn generic2_deserialize() {

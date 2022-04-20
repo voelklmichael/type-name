@@ -1,6 +1,6 @@
 [package]
-name = "type-name-example"
-version = "0.1.0"
+name = "typenaming-example-base"
+version = "0.4.2"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
@@ -9,5 +9,4 @@ description = "Infrastructure to derive name of type - helper crate to test crat
 repository = "https://github.com/voelklmichael/type-name/"
 
 [dependencies]
-type-name = "0.1.1"
-type-name-example-base = {path = "../type-name-example-base/", version="0.4.2"}
+typenaming = {path = "../typenaming", version="0.1.0"}

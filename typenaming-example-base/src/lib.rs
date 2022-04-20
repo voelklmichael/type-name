@@ -1,3 +1,3 @@
-use type_name::TypeName;
+use typenaming::TypeName;
 #[derive(TypeName)]
 pub struct TestVersionNumber;

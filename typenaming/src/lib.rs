@@ -11,7 +11,8 @@ pub use crate::type_name::TypeName;
 pub use crate::type_name_data::TypeNameData;
 pub use rustc_version::version as rustc_version;
 pub use semver::Version as TypeNameSemverVersion;
-pub use type_name_derive::TypeName;
+pub use std::module_path as std_module_path;
+pub use typenaming_derive::TypeName;
 
 /// This is a helper function which allows to easily produce a SemverVersion. It is used in the derived code.
 #[doc(hidden)]
