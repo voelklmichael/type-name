@@ -9,3 +9,10 @@
 
 # typenaming
  A library to derive the name of a type, together with some more basic information.
+
+
+#### License
+
+<sup>
+Licensed under <a href="LICENSE">MIT license</a>.
+</sup>
