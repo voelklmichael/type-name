@@ -1,5 +1,5 @@
-[![Documentation](https://docs.rs/typenaming/latest/typenaming/badge.svg)](https://docs.rs/typenaming)
 [![Crates.io][crates-badge]][crates-url]
+[![Documentation](https://docs.rs/typenaming/badge.svg)](https://docs.rs/typenaming)
 [![MIT licensed][mit-badge]][mit-url]
 
 [crates-badge]: https://img.shields.io/crates/v/badge-maker.svg
