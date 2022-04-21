@@ -34,6 +34,20 @@ fn arguments_crate_name() {
 }
 
 #[test]
+fn arguments_crate_module() {
+    use ::typenaming::TypeName;
+    #[derive(TypeName)]
+    #[typename(crate_module = "module_renamed")]
+    struct B {}
+    let type_name = dbg!(B::type_name_static());
+    assert_eq!("B", type_name.type_name());
+    assert_eq!(Some("typenaming"), type_name.crate_name().as_deref());
+    assert_eq!(Some("module_renamed"), type_name.crate_module().as_deref());
+    assert_eq!(0, type_name.generics().len());
+}
+
+
+#[test]
 fn arguments_crate_version() {
     use ::typenaming::TypeName;
     #[derive(TypeName)]

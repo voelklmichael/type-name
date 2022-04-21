@@ -9,4 +9,4 @@ description = "Infrastructure to derive name of type - helper crate to test crat
 repository = "https://github.com/voelklmichael/type-name/"
 
 [dependencies]
-typenaming = {path = "../typenaming", version="0.1.0"}
+typenaming = {path = "../typenaming", version="*"}

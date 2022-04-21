@@ -64,7 +64,7 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     let module_path_import;
     let crate_module = if let Some(crate_module) = crate_module {
         module_path_import = quote! {};
-        quote!(Some(stringify!(#crate_module).to_owned()))
+        quote!(Some(#crate_module.to_owned()))
     } else if default_to_none {
         module_path_import = quote! {};
         quote!(None)

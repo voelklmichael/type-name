@@ -34,6 +34,19 @@ fn arguments_crate_name() {
 }
 
 #[test]
+fn arguments_crate_module() {
+    use ::typenaming::TypeName;
+    #[derive(TypeName)]
+    #[typename(crate_module = "module_renamed")]
+    struct B {}
+    let type_name = dbg!(B::type_name_static());
+    assert_eq!("B", type_name.type_name());
+    assert_eq!(Some("typenaming-derive"), type_name.crate_name().as_deref());
+    assert_eq!(Some("module_renamed"), type_name.crate_module().as_deref());
+    assert_eq!(0, type_name.generics().len());
+}
+
+#[test]
 fn arguments_crate_version() {
     use ::typenaming::TypeName;
     #[derive(TypeName)]
@@ -73,6 +86,7 @@ fn arguments_default_to_none() {
     let type_name = dbg!(B::type_name_static());
     assert_eq!("B", type_name.type_name());
     assert_eq!(None, type_name.crate_name().as_deref());
+    assert_eq!(&None, type_name.crate_module());
     assert_eq!(&None, type_name.crate_version());
     assert_eq!(&None, type_name.rustc_version());
     assert_eq!(0, type_name.generics().len());
@@ -121,6 +135,21 @@ fn arguments_default_to_none_crate_name() {
     let type_name = dbg!(B::type_name_static());
     assert_eq!("B", type_name.type_name());
     assert_eq!(Some("test"), type_name.crate_name().as_deref());
+    assert_eq!(&None, type_name.crate_version());
+    assert_eq!(&None, type_name.rustc_version());
+    assert_eq!(0, type_name.generics().len());
+}
+
+#[test]
+fn arguments_default_to_none_crate_module() {
+    use ::typenaming::TypeName;
+    #[derive(TypeName)]
+    #[typename(default_to_none = true, crate_module = "test")]
+    struct B {}
+    let type_name = dbg!(B::type_name_static());
+    assert_eq!("B", type_name.type_name());
+    assert_eq!(None, type_name.crate_name().as_deref());
+    assert_eq!(Some("test"), type_name.crate_module().as_deref());
     assert_eq!(&None, type_name.crate_version());
     assert_eq!(&None, type_name.rustc_version());
     assert_eq!(0, type_name.generics().len());
