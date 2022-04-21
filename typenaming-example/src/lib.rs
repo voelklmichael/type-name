@@ -8,8 +8,8 @@ fn check_crate_version_number() {
         type_name.crate_name().as_deref().unwrap()
     );
     assert_eq!(
-        &Some(typenaming::TypeNameSemverVersion::new(0, 4, 2)),
+        &Some(typenaming::Version::new(0, 4, 2)),
         type_name.crate_version()
     );
-    assert_eq!(0, type_name.generics().len());   
+    assert_eq!(0, type_name.generics().len());
 }

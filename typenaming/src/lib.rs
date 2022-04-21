@@ -1,17 +1,19 @@
 #![deny(missing_docs)]
 //! This crate allows to derive the name of a type, together with some more basic information
 
-use std::str::FromStr;
-
 /// This module implements TypeName for some standard types
+#[doc(hidden)]
 pub mod std_impl;
 mod type_name;
 mod type_name_data;
 pub use crate::type_name::TypeName;
 pub use crate::type_name_data::TypeNameData;
+/// This is used by the derive macro, but shall not be used otherwise
+#[doc(hidden)]
 pub use rustc_version::version as rustc_version;
-pub use semver::Version as TypeNameSemverVersion;
-pub use std::module_path as std_module_path;
+/// This represents a semver-Version.
+/// Re-Exported from semver [<https://docs.rs/semver>]
+pub use semver::Version;
 pub use typenaming_derive::TypeName;
 
 /// This is a helper function which allows to easily produce a SemverVersion. It is used in the derived code.
@@ -32,7 +34,7 @@ pub fn new_semver_version(
         patch: patch
             .parse()
             .unwrap_or_else(|_| panic!("Failed to parse patch version: {patch}")),
-        pre: semver::Prerelease::from_str(pre)
+        pre: <semver::Prerelease as std::str::FromStr>::from_str(pre)
             .unwrap_or_else(|_| panic!("Failed to parse pre version: {pre}")),
         build: semver::BuildMetadata::EMPTY,
     }

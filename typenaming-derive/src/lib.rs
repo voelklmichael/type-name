@@ -74,7 +74,7 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     };
     let crate_version = if let Some(crate_version) = crate_version {
         quote!(Some(
-                <::typenaming::TypeNameSemverVersion as ::std::str::FromStr>::from_str(
+                <::typenaming::Version as ::std::str::FromStr>::from_str(
                 #crate_version
             )
             .expect(&format!("Failed to parse crate version argument '{}'", #crate_version)))
@@ -91,7 +91,7 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     };
     let rustc_version = if let Some(rustc_version) = rustc_version {
         quote!(Some(
-            <::typenaming::TypeNameSemverVersion as ::std::str::FromStr>::from_str(
+            <::typenaming::Version as ::std::str::FromStr>::from_str(
                 #rustc_version
             )
             .expect(&format!("Failed to parse rustc version argument '{}'", #rustc_version))

@@ -15,8 +15,8 @@ macro_rules! implementing {
                     TT.to_owned(),
                     Some("core".to_owned()),
                     Some("core".to_owned()),
-                    Some(crate::TypeNameSemverVersion::new(1, 0, 0)),
-                    Some(crate::TypeNameSemverVersion::new(1, 0, 0)),
+                    Some(crate::Version::new(1, 0, 0)),
+                    Some(crate::Version::new(1, 0, 0)),
                     vec![],
                 )
             }
@@ -67,8 +67,8 @@ macro_rules! implementing_unsized {
                     TT.to_owned(),
                     Some("core".to_owned()),
                     Some("core".to_owned()),
-                    Some(crate::TypeNameSemverVersion::new(1, 0, 0)),
-                    Some(crate::TypeNameSemverVersion::new(1, 0, 0)),
+                    Some(crate::Version::new(1, 0, 0)),
+                    Some(crate::Version::new(1, 0, 0)),
                     vec![],
                 )
             }
@@ -105,8 +105,8 @@ macro_rules! implementing_generic {
                     TT.to_owned(),
                     Some("core".to_owned()),
                     Some("core".to_owned()),
-                    Some(crate::TypeNameSemverVersion::new(1, 0, 0)),
-                    Some(crate::TypeNameSemverVersion::new(1, 0, 0)),
+                    Some(crate::Version::new(1, 0, 0)),
+                    Some(crate::Version::new(1, 0, 0)),
                     vec![$($g,)*],
                 )
             }
