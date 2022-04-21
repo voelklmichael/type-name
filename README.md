@@ -1,4 +1,4 @@
-[![Documentation](https://docs.rs/typenaming/latest/typenaming//badge.svg)](https://docs.rs/typenaming)
+[![Documentation](https://docs.rs/typenaming/latest/typenaming/badge.svg)](https://docs.rs/typenaming)
 [![Crates.io][crates-badge]][crates-url]
 [![MIT licensed][mit-badge]][mit-url]
 
