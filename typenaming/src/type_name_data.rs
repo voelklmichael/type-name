@@ -62,7 +62,11 @@ impl TypeNameData {
             generics,
         }
     }
-    fn to_one_line_string(&self) -> String {
+    /// Generates a one-line version, in the form "{type_name}<{generics}>, Crate={crate_name}, Module={crate_module}, Version={crate_version}, Rustc={rustc_version}"
+    /// Note that None-entries are skipped
+    /// If there are no generics, the '<…>'-part is skipped
+    /// If there are generics, the generics are recursively joined with ';', using this method
+    pub fn to_one_line_string(&self) -> String {
         let Self {
             type_name,
             crate_name,
