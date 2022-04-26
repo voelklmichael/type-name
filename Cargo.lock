@@ -144,7 +144,7 @@ dependencies = [
 
 [[package]]
 name = "typenaming"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "rustc_version",
  "semver",

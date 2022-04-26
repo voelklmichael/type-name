@@ -1,5 +1,7 @@
+use std::str::FromStr;
+
 /// This type represents some basic information about a given type
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TypeNameData {
     type_name: String,
     crate_name: Option<String>,
@@ -238,7 +240,6 @@ impl TypeNameData {
                     break;
                 }
             }
-            use std::str::FromStr;
             let crate_version = crate_version
                 .map(|v| semver::Version::from_str(&v))
                 .transpose()
@@ -276,6 +277,14 @@ impl TypeNameData {
         } else {
             Err((ParseError::RemainingToken(data), remaining.to_string()))
         }
+    }
+}
+
+impl FromStr for TypeNameData {
+    type Err = (ParseError, String);
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        TypeNameData::try_from_one_line_string(s)
     }
 }
 impl serde::Serialize for TypeNameData {
