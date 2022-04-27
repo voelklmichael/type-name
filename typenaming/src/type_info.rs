@@ -2,13 +2,13 @@ use std::str::FromStr;
 
 /// This type represents some basic information about a given type
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct TypeNameData {
+pub struct TypeInfo {
     type_name: String,
     crate_name: Option<String>,
     crate_module: Option<String>,
     crate_version: Option<::semver::Version>,
     rustc_version: Option<::semver::Version>,
-    generics: Vec<TypeNameData>,
+    generics: Vec<TypeInfo>,
 }
 
 #[derive(Debug)]
@@ -20,7 +20,7 @@ enum Token<'a> {
     Comma,
 }
 
-impl TypeNameData {
+impl TypeInfo {
     /// Get name of type
     pub fn type_name(&self) -> &str {
         &self.type_name
@@ -43,7 +43,7 @@ impl TypeNameData {
         &self.rustc_version
     }
     /// Get list of generic type parameters of the given type
-    pub fn generics(&self) -> &[TypeNameData] {
+    pub fn generics(&self) -> &[TypeInfo] {
         &self.generics
     }
     /// Constructor
@@ -53,7 +53,7 @@ impl TypeNameData {
         crate_module: Option<String>,
         crate_version: Option<::semver::Version>,
         rustc_version: Option<::semver::Version>,
-        generics: Vec<TypeNameData>,
+        generics: Vec<TypeInfo>,
     ) -> Self {
         Self {
             type_name,
@@ -113,7 +113,7 @@ impl TypeNameData {
         split_string(s, &mut tokens);
         fn parse_type<'a, 'b>(
             tokens: &'a [Token<'b>],
-        ) -> Result<(TypeNameData, &'a [Token<'b>]), (ParseError, String)> {
+        ) -> Result<(TypeInfo, &'a [Token<'b>]), (ParseError, String)> {
             let (type_name, tokens) =
                 if let Some((Token::String(type_name), tokens)) = tokens.split_first() {
                     (type_name.to_string(), tokens)
@@ -259,7 +259,7 @@ impl TypeNameData {
                     )
                 })?;
             Ok((
-                TypeNameData {
+                TypeInfo {
                     type_name,
                     crate_name,
                     crate_module,
@@ -280,14 +280,14 @@ impl TypeNameData {
     }
 }
 
-impl FromStr for TypeNameData {
+impl FromStr for TypeInfo {
     type Err = (ParseError, String);
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        TypeNameData::try_from_one_line_string(s)
+        TypeInfo::try_from_one_line_string(s)
     }
 }
-impl serde::Serialize for TypeNameData {
+impl serde::Serialize for TypeInfo {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -296,14 +296,14 @@ impl serde::Serialize for TypeNameData {
         serializer.serialize_str(&s)
     }
 }
-impl<'de> serde::Deserialize<'de> for TypeNameData {
+impl<'de> serde::Deserialize<'de> for TypeInfo {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
         use serde::de::Error;
         let s = String::deserialize(deserializer)?;
-        TypeNameData::try_from_one_line_string(&s).map_err(|(e, tokens)| {
+        TypeInfo::try_from_one_line_string(&s).map_err(|(e, tokens)| {
             D::Error::custom(format!(
                 "Failed to parse due to error '{e:?}' with remaining tokens '{tokens}' and complete tokens '{s}'"
             ))
@@ -339,7 +339,7 @@ fn split_string<'a>(s: &'a str, v: &mut Vec<Token<'a>>) {
 #[derive(Debug)]
 pub enum ParseError {
     TypeNameNotFound,
-    RemainingToken(TypeNameData),
+    RemainingToken(TypeInfo),
     UnexpectedGenericEnd,
     UnexpectedGenericGenericNext,
     UnexpectedGenericStart,
@@ -377,9 +377,8 @@ impl<'b> TokensToString for [Token<'b>] {
 #[cfg(test)]
 mod serde_tests {
     use super::*;
-    fn simple_example() -> TypeNameData {
-        use core::str::FromStr;
-        TypeNameData {
+    fn simple_example() -> TypeInfo {
+        TypeInfo {
             type_name: "Test".to_owned(),
             crate_name: Some("testing".to_owned()),
             crate_module: Some("test_module".to_owned()),
@@ -394,9 +393,8 @@ mod serde_tests {
             generics: vec![],
         }
     }
-    fn generic_example() -> TypeNameData {
-        use core::str::FromStr;
-        TypeNameData {
+    fn generic_example() -> TypeInfo {
+        TypeInfo {
             type_name: "Gen".to_owned(),
             crate_name: Some("generic".to_owned()),
             crate_module: Some("test_module".to_owned()),
@@ -411,9 +409,8 @@ mod serde_tests {
             generics: vec![simple_example()],
         }
     }
-    fn generic2_example() -> TypeNameData {
-        use core::str::FromStr;
-        TypeNameData {
+    fn generic2_example() -> TypeInfo {
+        TypeInfo {
             type_name: "Gen".to_owned(),
             crate_name: Some("generic2".to_owned()),
             crate_module: Some("test_module".to_owned()),
@@ -429,7 +426,7 @@ mod serde_tests {
         }
     }
 
-    fn asserting(lhs: &TypeNameData, rhs: &TypeNameData) {
+    fn asserting(lhs: &TypeInfo, rhs: &TypeInfo) {
         assert_eq!(lhs.crate_name, rhs.crate_name);
         assert_eq!(lhs.type_name, rhs.type_name);
         assert_eq!(lhs.generics.len(), rhs.generics.len());
@@ -452,7 +449,7 @@ mod serde_tests {
     fn simple_deserialize() {
         let info = simple_example();
         let serialized = dbg!(serde_json::to_string_pretty(&info)).unwrap();
-        let deserialized: TypeNameData = serde_json::from_str(&serialized).unwrap();
+        let deserialized: TypeInfo = serde_json::from_str(&serialized).unwrap();
         asserting(&deserialized, &info);
     }
     #[test]
@@ -467,7 +464,7 @@ mod serde_tests {
     fn generic_deserialize() {
         let info = generic_example();
         let serialized = dbg!(serde_json::to_string_pretty(&info)).unwrap();
-        let deserialized: TypeNameData = serde_json::from_str(&serialized).unwrap();
+        let deserialized: TypeInfo = serde_json::from_str(&serialized).unwrap();
         asserting(&deserialized, &info);
     }
     #[test]
@@ -481,7 +478,7 @@ mod serde_tests {
     fn generic2_deserialize() {
         let info = generic2_example();
         let serialized = dbg!(serde_json::to_string_pretty(&info)).unwrap();
-        let deserialized: TypeNameData = serde_json::from_str(&serialized).unwrap();
+        let deserialized: TypeInfo = serde_json::from_str(&serialized).unwrap();
         dbg!(&info);
         dbg!(&deserialized);
         asserting(&deserialized, &info);

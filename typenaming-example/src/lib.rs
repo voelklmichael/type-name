@@ -1,7 +1,7 @@
 #[test]
 fn check_crate_version_number() {
-    use typenaming::TypeName;
-    let type_name = dbg!(::typenaming_example_base::TestVersionNumber::type_name_static());
+    use typenaming::TypeNameable;
+    let type_name = dbg!(::typenaming_example_base::TestVersionNumber::type_info());
     assert_eq!("TestVersionNumber", type_name.type_name());
     assert_eq!(
         "typenaming-example-base",

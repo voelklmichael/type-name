@@ -1,4 +1,4 @@
-/// This is an unstable helper macro, which is used to implement TypeName for several types
+/// This is an unstable helper macro, which is used to implement TypeNameable for several types
 #[doc(hidden)]
 #[macro_export]
 macro_rules! implementing {
@@ -6,12 +6,12 @@ macro_rules! implementing {
         #[allow(non_snake_case)]
         #[doc(hidden)]
         pub mod $t {
-            use crate::{TypeName, TypeNameData};
+            use crate::{TypeInfo, TypeNameable};
 
             type T = $t;
             const TT: &'static str = stringify!($t);
-            fn info() -> TypeNameData {
-                TypeNameData::new(
+            fn info() -> TypeInfo {
+                TypeInfo::new(
                     TT.to_owned(),
                     Some("core".to_owned()),
                     Some("core".to_owned()),
@@ -21,28 +21,14 @@ macro_rules! implementing {
                 )
             }
 
-            impl TypeName for T {
-                fn type_name(&self) -> TypeNameData {
-                    info()
-                }
-
-                fn type_name_static() -> TypeNameData
-                where
-                    Self: Sized,
-                {
+            impl TypeNameable for T {
+                fn type_info() -> TypeInfo {
                     info()
                 }
             }
 
-            impl<'a> TypeName for &'a T {
-                fn type_name(&self) -> TypeNameData {
-                    info()
-                }
-
-                fn type_name_static() -> TypeNameData
-                where
-                    Self: Sized,
-                {
+            impl<'a> TypeNameable for &'a T {
+                fn type_info() -> TypeInfo {
                     info()
                 }
             }
@@ -50,7 +36,7 @@ macro_rules! implementing {
     };
 }
 
-/// This is an unstable helper macro, which is used to implement TypeName for several types
+/// This is an unstable helper macro, which is used to implement TypeNameable for several types
 #[doc(hidden)]
 #[macro_export]
 macro_rules! implementing_unsized {
@@ -58,12 +44,12 @@ macro_rules! implementing_unsized {
         #[allow(non_snake_case)]
         #[doc(hidden)]
         pub mod $t {
-            use crate::{TypeName, TypeNameData};
+            use crate::{TypeInfo, TypeNameable};
 
             type T = $t;
             const TT: &'static str = stringify!($t);
-            fn info() -> TypeNameData {
-                TypeNameData::new(
+            fn info() -> TypeInfo {
+                TypeInfo::new(
                     TT.to_owned(),
                     Some("core".to_owned()),
                     Some("core".to_owned()),
@@ -73,15 +59,8 @@ macro_rules! implementing_unsized {
                 )
             }
 
-            impl<'a> TypeName for &'a T {
-                fn type_name(&self) -> TypeNameData {
-                    info()
-                }
-
-                fn type_name_static() -> TypeNameData
-                where
-                    Self: Sized,
-                {
+            impl<'a> TypeNameable for &'a T {
+                fn type_info() -> TypeInfo {
                     info()
                 }
             }
@@ -89,7 +68,7 @@ macro_rules! implementing_unsized {
     };
 }
 
-/// This is an unstable helper macro, which is used to implement TypeName for several types
+/// This is an unstable helper macro, which is used to implement TypeNameable for several types
 #[doc(hidden)]
 #[macro_export]
 macro_rules! implementing_generic {
@@ -97,11 +76,11 @@ macro_rules! implementing_generic {
         #[doc(hidden)]
         #[allow(non_snake_case)]
         pub mod $t {
-            use crate::{TypeName, TypeNameData};
+            use crate::{TypeNameable, TypeInfo};
 
             const TT: &'static str = stringify!($t);
-            fn info($($g: TypeNameData,)*) -> TypeNameData {
-                TypeNameData::new(
+            fn info($($g: TypeInfo,)*) -> TypeInfo {
+                TypeInfo::new(
                     TT.to_owned(),
                     Some("core".to_owned()),
                     Some("core".to_owned()),
@@ -111,35 +90,21 @@ macro_rules! implementing_generic {
                 )
             }
 
-            impl<$($g,)*> TypeName for $t<$($g,)*>
+            impl<$($g,)*> TypeNameable for $t<$($g,)*>
             where
-                $($g: TypeName,)*
+                $($g: TypeNameable,)*
             {
-                fn type_name(&self) -> TypeNameData {
-                    info($($g::type_name_static(),)*)
-                }
-
-                fn type_name_static() -> TypeNameData
-                where
-                    Self: Sized,
-                {
-                    info($($g::type_name_static(),)*)
+                fn type_info() -> TypeInfo {
+                    info($($g::type_info(),)*)
                 }
             }
 
-            impl<'a, $($g,)*> TypeName for &'a $t<$($g,)*>
+            impl<'a, $($g,)*> TypeNameable for &'a $t<$($g,)*>
             where
-                $($g: TypeName,)*
+                $($g: TypeNameable,)*
             {
-                fn type_name(&self) -> TypeNameData {
-                    info($($g::type_name_static(),)*)
-                }
-
-                fn type_name_static() -> TypeNameData
-                where
-                    Self: Sized,
-                {
-                    info($($g::type_name_static(),)*)
+                fn type_info() -> TypeInfo {
+                    info($($g::type_info(),)*)
                 }
             }
         }

@@ -1,3 +1,3 @@
-use typenaming::TypeName;
-#[derive(TypeName)]
+use typenaming::TypeNameable;
+#[derive(TypeNameable)]
 pub struct TestVersionNumber;

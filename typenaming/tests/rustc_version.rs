@@ -1,9 +1,9 @@
 #[test]
 fn rustc_version() {
-    use ::typenaming::TypeName;
-    #[derive(TypeName)]
+    use ::typenaming::TypeNameable;
+    #[derive(TypeNameable)]
     struct A {}
-    let type_name = dbg!(A::type_name_static());
+    let type_name = dbg!(A::type_info());
     assert_eq!("A", type_name.type_name());
     assert_eq!(Some("typenaming"), type_name.crate_name().as_deref());
     assert_eq!(0, type_name.generics().len());

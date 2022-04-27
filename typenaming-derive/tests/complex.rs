@@ -1,9 +1,9 @@
 #[test]
 fn complex() {
-    use ::typenaming::TypeName;
-    #[derive(TypeName)]
+    use ::typenaming::TypeNameable;
+    #[derive(TypeNameable)]
     struct A<'a, 'b, T, S>(&'a T, &'b S);
-    let type_name = A::<&'static u32, &'static bool>::type_name_static();
+    let type_name = A::<&'static u32, &'static bool>::type_info();
     assert_eq!("A", type_name.type_name());
     assert_eq!(Some("typenaming-derive"), type_name.crate_name().as_deref());
     assert_eq!(2, type_name.generics().len());

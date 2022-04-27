@@ -5,7 +5,7 @@ use syn::{parse_macro_input, DeriveInput};
 fn add_trait_bounds(mut generics: syn::Generics) -> syn::Generics {
     for param in &mut generics.params {
         if let syn::GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(syn::parse_quote!(TypeName));
+            type_param.bounds.push(syn::parse_quote!(TypeNameable));
         }
     }
     generics
@@ -14,7 +14,7 @@ fn add_trait_bounds(mut generics: syn::Generics) -> syn::Generics {
 use darling::FromDeriveInput;
 
 #[derive(FromDeriveInput, Debug)]
-#[darling(attributes(typename))]
+#[darling(attributes(typenameable))]
 struct TypeNameArguments {
     #[darling(default)]
     type_name: Option<syn::Ident>,
@@ -30,7 +30,7 @@ struct TypeNameArguments {
     default_to_none: bool,
 }
 
-#[proc_macro_derive(TypeName, attributes(typename))]
+#[proc_macro_derive(TypeNameable, attributes(typenameable))]
 pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     let derived = parse_macro_input!(tokens);
     let TypeNameArguments {
@@ -107,10 +107,10 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
         .type_params()
         .map(|x| x.ident.clone())
         .collect::<Vec<_>>();
-    let generics = quote!(#(<#generics as ::typenaming::TypeName>::type_name_static()),*);
+    let generics = quote!(#(<#generics as ::typenaming::TypeNameable>::type_info()),*);
     let body = quote! {
         #module_path_import
-        ::typenaming::TypeNameData::new(
+        ::typenaming::TypeInfo::new(
             #type_name.to_owned(),
             #crate_name,
             #crate_module,
@@ -123,11 +123,8 @@ pub fn derive_type_name(tokens: TokenStream) -> TokenStream {
     };
     quote! {
         #[automatically_derived]
-        impl #impl_generics TypeName for #ident #ty_generics #where_clause {
-            fn type_name(&self) -> ::typenaming::TypeNameData {
-                #body
-            }
-            fn type_name_static() -> ::typenaming::TypeNameData where Self: Sized {
+        impl #impl_generics TypeNameable for #ident #ty_generics #where_clause {
+            fn type_info() -> ::typenaming::TypeInfo {
                 #body
             }
         }
