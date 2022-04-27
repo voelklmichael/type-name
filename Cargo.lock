@@ -161,7 +161,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "typenaming",
 ]
 
 [[package]]
