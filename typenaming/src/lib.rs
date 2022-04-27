@@ -8,7 +8,7 @@ pub mod std_impl;
 mod type_info;
 mod typenameable;
 pub use crate::type_info::TypeInfo;
-pub use crate::typenameable::TypeNameable;
+pub use crate::typenameable::{TypeNameable, TypeQueryable};
 
 /// This is used by the derive macro, but shall not be used otherwise
 #[doc(hidden)]
@@ -17,7 +17,7 @@ pub use rustc_version::version as rustc_version;
 /// This represents a semver-Version.
 /// Re-Exported from semver [<https://docs.rs/semver>]
 pub use semver::Version;
-pub use typenaming_derive::TypeNameable;
+pub use typenaming_derive::{TypeNameable, TypeQueryable};
 
 /// This is a helper function which allows to easily produce a SemverVersion. It is used in the derived code.
 #[doc(hidden)]

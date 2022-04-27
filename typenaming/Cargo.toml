@@ -1,6 +1,6 @@
 [package]
 name = "typenaming"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
@@ -13,7 +13,7 @@ repository = "https://github.com/voelklmichael/type-name/"
 rustc_version = "0.4.0"
 semver = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-typenaming-derive = {path = "../typenaming-derive/", version="0.2.0"}
+typenaming-derive = {path = "../typenaming-derive/", version="0.3.0"}
 
 [dev-dependencies]
 serde_json = "1.0"

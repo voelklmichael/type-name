@@ -144,7 +144,7 @@ dependencies = [
 
 [[package]]
 name = "typenaming"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "rustc_version",
  "semver",
@@ -155,7 +155,7 @@ dependencies = [
 
 [[package]]
 name = "typenaming-derive"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "darling",
  "proc-macro2",
